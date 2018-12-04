@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "no-empty": true,
+    "quotemark": [ true, "single", "avoid-escape"]
+  }
+}

@@ -1,0 +1,51 @@
+<template>
+  <section>
+    <h2>Kittens!</h2>
+    <div>${status}</div>
+    <button if.bind="status !== 'Connected'" click.trigger="connect()">Connect</button>
+    <div class="row">
+      <div class="col-md-2">
+        <div class="panel panel-${panelType} medium-panel" dragover.delegate="panelType = 'success'" dragleave.trigger="panelType = 'default'"
+          drop.trigger="handleUpload($event)">
+          <div class="panel-heading">Upload</div>
+          <div class="panel-body">
+            ${uploadText}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel panel-default medium-panel">
+          <div class="panel-heading">Server Logs</div>
+          <div class="panel-body">
+            <div repeat.for="logEntry of logEntries | limit:7">
+              &gt;&nbsp;${logEntry}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <template if.bind="kittens.length > 0">
+        <div class="col-sm-6 col-md-3 card-container" repeat.for="kitten of kittens">
+          <div class="card">
+            <div class="avatar">
+              <img src.bind="kitten.uri" crossorigin ref="image" />
+            </div>
+            <div class="content">
+              <p class="name">${kitten.description.captions[0].text}</p>
+              <p>
+                <template repeat.for="tag of kitten.description.tags | limit:3">
+                  <span class="badge badge-success">${tag}</span>&nbsp;
+                </template>
+              </p>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template else>
+        Someone needs to upload some kittens!
+      </template>
+    </div>
+  </section>
+</template>
