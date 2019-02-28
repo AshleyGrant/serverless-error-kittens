@@ -1,6 +1,6 @@
 import { Context } from '@azure/functions';
+import * as sharp from 'sharp';
 
-const jimp = require('jimp');
 const storage = require('azure-storage');
 
 export default async function (context: Context, image) {
@@ -12,7 +12,7 @@ export default async function (context: Context, image) {
     const {
       newImage,
       outputProperty
-    } = await resizeImage(image, context.bindingData.name, context);
+    } = await scaleImage(image, context.bindingData.name, context);
 
     if (newImage.length > maxSize) {
       context.bindings.needsFurtherScaling = newImage;
@@ -33,20 +33,25 @@ export default async function (context: Context, image) {
   }
 }
 
-async function resizeImage(image, name, context) {
+async function scaleImage(image, name, context) {
   const scalingFactor = 0.9;
 
   let newImage = image;
-  let jimpInstance = await jimp.read(image);
+  const sharpInstance = sharp(image);
 
-  const mime = await jimpInstance.getMIME();
+  const {
+    height,
+    width,
+    format
+  } = await sharpInstance.metadata();
 
   let outputProperty;
-  switch (mime) {
-    case jimp.MIME_JPEG:
+
+  switch (format) {
+    case 'jpeg':
       outputProperty = 'jpegContent';
       break;
-    case jimp.MIME_PNG:
+    case 'png':
       outputProperty = 'pngContent';
       break;
     default:
@@ -55,9 +60,9 @@ async function resizeImage(image, name, context) {
       return;
   }
 
-  jimpInstance = await jimpInstance.scale(scalingFactor);
-
-  newImage = await jimpInstance.getBufferAsync(mime);
+  newImage = await sharpInstance.resize(Math.floor(width * scalingFactor), Math.floor(height * scalingFactor), {
+    fit: 'inside'
+  }).toBuffer();
 
   return {
     newImage,

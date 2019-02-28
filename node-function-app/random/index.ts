@@ -1,5 +1,5 @@
 import { Context, HttpRequest } from '@azure/functions';
-import { KittenInfo } from '../interfaces';
+import { KittenInfo } from '../lib/interfaces';
 
 export default async function (context: Context, req: HttpRequest, kittens: KittenInfo[]) {
   try {

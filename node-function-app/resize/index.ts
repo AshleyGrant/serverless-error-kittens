@@ -1,4 +1,5 @@
 import { Context } from '@azure/functions';
+import * as sharp from 'sharp';
 
 export default async function (context: Context, image) {
   try {
@@ -31,27 +32,25 @@ export default async function (context: Context, image) {
 }
 
 async function resizeImage(image, name, context) {
-  const jimp = require('jimp');
   const maxWidth = parseInt(process.env.MAX_IMAGE_WIDTH);
   const maxHeight = parseInt(process.env.MAX_IMAGE_HEIGHT);
 
   let newImage = image;
-  let jimpInstance = await jimp.read(image);
+  const sharpInstance = sharp(image);
 
-  const [
-    width, height, mime
-  ] = await Promise.all([
-    jimpInstance.getWidth(),
-    jimpInstance.getHeight(),
-    jimpInstance.getMIME()
-  ]);
+  const {
+    height,
+    width,
+    format
+  } = await sharpInstance.metadata();
 
   let outputProperty;
-  switch (mime) {
-    case jimp.MIME_JPEG:
+
+  switch (format) {
+    case 'jpeg':
       outputProperty = 'jpegContent';
       break;
-    case jimp.MIME_PNG:
+    case 'png':
       outputProperty = 'pngContent';
       break;
     default:
@@ -64,24 +63,10 @@ async function resizeImage(image, name, context) {
   const toTall = height > maxHeight;
 
   if (toWide || toTall) {
-    let newHeight = jimp.AUTO;
-    let newWidth = jimp.AUTO;
 
-    if (toWide && toTall) {
-      newWidth = maxWidth;
-      newHeight = maxHeight;
-    } else if (toWide) {
-      newWidth = maxWidth;
-    } else {
-      newHeight = maxHeight;
-    }
-
-    jimpInstance = await jimpInstance.scaleToFit(newWidth, newHeight);
-
-    // context.log('Resized width: ', await jimpInstance.getWidth())
-    // context.log('Resized height: ', await jimpInstance.getHeight())
-
-    newImage = await jimpInstance.getBufferAsync(mime);
+    newImage = await sharpInstance.resize( maxWidth, maxHeight, {
+      fit: 'inside'
+    }).toBuffer();
   }
 
   return {
