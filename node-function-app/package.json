@@ -1,21 +1,16 @@
 {
-  "name": "error-kittens-function-app",
-  "version": "1.0.0",
+  "name": "node-function-app",
   "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "watch": "tsc -w",
+    "prestart": "npm run build && func extensions install",
+    "start:host": "func start",
+    "start": "npm run start:host & npm run watch",
+    "build:production": "npm run prestart && npm prune --production",
+    "test": "echo \"No tests yet...\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AshleyGrant/serverless-error-kittens.git"
-  },
-  "author": "Ashley Grant (ashley@ashleygrant.com)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/AshleyGrant/serverless-error-kittens/issues"
-  },
-  "homepage": "https://github.com/AshleyGrant/serverless-error-kittens#readme",
   "dependencies": {
     "azure-cognitiveservices-computervision": "^3.2.0",
     "azure-storage": "^2.10.2",
@@ -25,10 +20,13 @@
     "ms-rest-azure": "^2.5.9",
     "node-fetch": "^2.2.1",
     "querystring": "^0.2.0",
+    "tslint": "^5.13.0",
     "twilio": "^3.24.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "eslint": "^5.9.0"
+    "@azure/functions": "^1.0.1-beta2",
+    "@types/node": "^11.9.5",
+    "typescript": "^3.3.3"
   }
 }

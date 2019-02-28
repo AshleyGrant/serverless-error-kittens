@@ -1,16 +1,18 @@
-module.exports = async function (context, { uri, blobName }, image) {
-  const ComputerVisionClient = require('azure-cognitiveservices-computervision');
-  const { CognitiveServicesCredentials } = require('ms-rest-azure');
+import { Context } from '@azure/functions';
+import ComputerVisionClient from 'azure-cognitiveservices-computervision';
+import { CognitiveServicesCredentials } from 'ms-rest-azure';
+
+import * as  storage from 'azure-storage';
+
+export default async function (context: Context, { uri, blobName }: InputParams) {
 
   const KITTEN_FINDER_URI_BASE = process.env['KITTEN_FINDER_URI_BASE'];
   const KITTEN_FINDER_KEY = process.env['KITTEN_FINDER_KEY'];
 
   try {
 
-    const storage = require('azure-storage');
-
     const blobService = storage.createBlobService(process.env.ERROR_KITTENS_STORAGE);
-    const imageAsStream = blobService.createReadStream(process.env.IMAGE_CONTAINER, blobName);
+    const imageAsStream = blobService.createReadStream(process.env.IMAGE_CONTAINER, blobName, null);
 
     const credentials = new CognitiveServicesCredentials(KITTEN_FINDER_KEY);
     const client = new ComputerVisionClient(credentials, KITTEN_FINDER_URI_BASE);
@@ -36,7 +38,7 @@ module.exports = async function (context, { uri, blobName }, image) {
     const isNaughty = isAdultContent || isRacyContent;
 
     const imageInfo = {
-      PartitionKey: "ImageInfo",
+      PartitionKey: 'ImageInfo',
       RowKey: blobName,
       uri,
       blobName,
@@ -44,8 +46,7 @@ module.exports = async function (context, { uri, blobName }, image) {
       description,
       metadata,
       isACat: prettySureItsACat,
-      isSFW: !isNaughty,
-      metadata
+      isSFW: !isNaughty
     };
 
     // context.log(imageInfo);
@@ -70,7 +71,7 @@ module.exports = async function (context, { uri, blobName }, image) {
       const matches = error.message.match(/Try again in (\d+) seconds/);
 
       if (matches && matches.length === 2) {
-        const waitTime = parseInt(matches[1])
+        const waitTime = parseInt(matches[1]);
         // wait a few seconds and then requeue
         await new Promise(resolve => {
           context.log(`Placing blob ${blobName} in Cognitive Services retry queue in ${waitTime} seconds...`);
@@ -88,6 +89,9 @@ module.exports = async function (context, { uri, blobName }, image) {
     }
     throw error;
   }
-};
+}
 
-// "Rate limit is exceeded. Try again in 34 seconds."
+interface InputParams {
+  uri: string;
+  blobName: string;
+}

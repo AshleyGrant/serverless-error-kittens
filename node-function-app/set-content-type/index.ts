@@ -1,4 +1,6 @@
-module.exports = async function (context, image) {
+import { Context } from '@azure/functions';
+
+export default async function (context: Context, image) {
   try {
     const { created, lastModified } = context.bindingData.properties;
 
@@ -18,7 +20,7 @@ module.exports = async function (context, image) {
       if (resultOrError !== null && typeof resultOrError === 'object') {
         throw resultOrError;
       }
-      
+
       context.bindings.queueForAI = { uri, blobName };
 
       context.bindings.message = [{
@@ -30,4 +32,4 @@ module.exports = async function (context, image) {
     context.log(error);
     throw error;
   }
-};
+}

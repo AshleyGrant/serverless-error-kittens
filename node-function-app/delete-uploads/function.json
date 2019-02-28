@@ -14,5 +14,6 @@
       "hubName": "errorKittens",
       "direction": "out"
     }
-  ]
+  ],
+  "scriptFile": "../dist/delete-uploads/index.js"
 }

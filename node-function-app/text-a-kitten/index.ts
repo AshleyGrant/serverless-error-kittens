@@ -1,8 +1,9 @@
+import { Context, HttpRequest } from '@azure/functions';
 
 const { parse } = require('querystring');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 
-module.exports = async function (context, req, kittens) {
+export default async function (context: Context, req: HttpRequest, kittens) {
   context.log('JavaScript HTTP trigger function processed a request.');
 
   const { Body: body } = parse(req.body);
@@ -30,7 +31,7 @@ module.exports = async function (context, req, kittens) {
     },
     body: twiml.toString()
   };
-};
+}
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));

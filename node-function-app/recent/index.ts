@@ -1,4 +1,7 @@
-module.exports = async function (context, req, kittens = []) {
+import { Context, HttpRequest } from '@azure/functions';
+import { KittenInfo } from '../interfaces';
+
+export default async function (context: Context, req: HttpRequest, kittens: KittenInfo[] = []) {
   const recentCount = parseInt(process.env.RECENT_COUNT);
 
   try {
@@ -13,6 +16,6 @@ module.exports = async function (context, req, kittens = []) {
       body: {
         message: 'An error has occurred...'
       }
-    }
+    };
   }
-};
+}

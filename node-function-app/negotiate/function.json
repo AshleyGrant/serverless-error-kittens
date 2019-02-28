@@ -18,5 +18,6 @@
       "hubName": "errorKittens",
       "direction": "in"
     }
-  ]
+  ],
+  "scriptFile": "../dist/negotiate/index.js"
 }

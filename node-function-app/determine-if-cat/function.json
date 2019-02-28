@@ -28,5 +28,6 @@
       "hubName": "errorKittens",
       "direction": "out"
     }
-  ]
+  ],
+  "scriptFile": "../dist/determine-if-cat/index.js"
 }

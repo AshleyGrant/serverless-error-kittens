@@ -1,13 +1,15 @@
+import { Context } from '@azure/functions';
+
 const jimp = require('jimp');
 const storage = require('azure-storage');
 
-module.exports = async function (context, image) {
+export default async function (context: Context, image) {
   try {
     const maxSize = parseInt(process.env.MAX_IMAGE_SIZE_BYTES);
     // context.log("Resizing image \n Name:", context.bindingData.name)
     // context.log("Blob Size:", image.length, "Bytes");
 
-    let {
+    const {
       newImage,
       outputProperty
     } = await resizeImage(image, context.bindingData.name, context);
@@ -29,7 +31,7 @@ module.exports = async function (context, image) {
     context.log(error);
     throw error;
   }
-};
+}
 
 async function resizeImage(image, name, context) {
   const scalingFactor = 0.9;

@@ -21,5 +21,6 @@
       "hubName": "errorKittens",
       "direction": "out"
     }
-  ]
+  ],
+  "scriptFile": "../dist/set-content-type/index.js"
 }

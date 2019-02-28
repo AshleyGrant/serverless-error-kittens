@@ -1,11 +1,11 @@
 // An HTTP trigger Azure Function that returns a SAS token for Azure Storage for the specified container. 
 // You can also optionally specify a particular blob name and access permissions. 
 // To learn more, see https://github.com/Azure-Samples/functions-dotnet-sas-token/blob/master/README.md
+import { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import * as azure from 'azure-storage';
+import uuidv4 from 'uuid/v4';
 
-const azure = require('azure-storage');
-const uuidv4 = require('uuid/v4');
-
-module.exports = async function (context, req) {
+export default async function (context: Context, req: HttpRequest) {
   // The following values can be used for permissions: 
   // "a" (Add), "r" (Read), "w" (Write), "d" (Delete), "l" (List)
   // Concatenate multiple permissions, such as "rwa" = Read, Write, Add
@@ -19,7 +19,7 @@ module.exports = async function (context, req) {
       container = process.env.UPLOAD_CONTAINER;
       break;
     default:
-      throw 'Unrecognized container';
+      throw new Error('Unrecognized container');
   }
 
   let blobName = req.body.blobName;
@@ -29,15 +29,15 @@ module.exports = async function (context, req) {
       const count = parseInt(req.body.count);
 
       context.res = {
-        body: Array.from({ length: count }, () => generateSasToken(context, container, req.body.permissions, uuidv4()))
+        body: Array.from({ length: count }, () => generateSasToken(container, req.body.permissions, uuidv4()))
       };
     }
     else {
       if (req.body.permissions === azure.BlobUtilities.SharedAccessPermissions.WRITE) {
-        blobName = uuidv4()
+        blobName = uuidv4();
       }
       context.res = {
-        body: generateSasToken(context, container, req.body.permissions, blobName)
+        body: generateSasToken(container, req.body.permissions, blobName)
       };
     }
   } else {
@@ -46,25 +46,25 @@ module.exports = async function (context, req) {
       body: {
         error: 'Unrecognized or missing container'
       }
-    }
+    };
   }
-};
+}
 
-function generateSasToken(context,
+function generateSasToken(
   container = process.env.IMAGE_CONTAINER,
   permissions = azure.BlobUtilities.SharedAccessPermissions.READ,
   blobName) {
-  var connString = process.env.ERROR_KITTENS_STORAGE;
-  var blobService = azure.createBlobService(connString);
+  const connString = process.env.ERROR_KITTENS_STORAGE;
+  const blobService = azure.createBlobService(connString);
 
   // Create a SAS token that expires in an hour
   // Set start time to five minutes ago to avoid clock skew.
-  var startDate = new Date();
+  const startDate = new Date();
   startDate.setMinutes(startDate.getMinutes() - 5);
-  var expiryDate = new Date(startDate);
+  const expiryDate = new Date(startDate);
   expiryDate.setMinutes(startDate.getMinutes() + 60);
 
-  var sharedAccessPolicy = {
+  const sharedAccessPolicy = {
     AccessPolicy: {
       Permissions: permissions,
       Start: startDate,
@@ -72,7 +72,7 @@ function generateSasToken(context,
     }
   };
 
-  var sasToken = blobService.generateSharedAccessSignature(container, blobName, sharedAccessPolicy);
+  const sasToken = blobService.generateSharedAccessSignature(container, blobName, sharedAccessPolicy);
 
   return blobService.getUrl(container, blobName, sasToken, true);
 }

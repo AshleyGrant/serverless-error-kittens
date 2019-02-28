@@ -36,5 +36,6 @@
       "connection": "ERROR_KITTENS_STORAGE",
       "direction": "out"
     }
-  ]
+  ],
+  "scriptFile": "../dist/scale-to-fit/index.js"
 }

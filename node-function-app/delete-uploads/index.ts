@@ -1,13 +1,15 @@
-module.exports = async function (context, { container, blobName }) {
-  deleteImage(container, blobName);
+import { Context } from '@azure/functions';
+
+export default async function (context: Context, { container, blobName }: InputParams) {
+  deleteImage(context, container, blobName);
 
   context.bindings.message = [{
     target: process.env.SIGNALR_MESSAGE_TARGET,
     arguments: [`Deleted blob ${blobName} from container ${container}...`]
   }];
-};
+}
 
-async function deleteImage(container, blobName) {
+async function deleteImage(context: Context, container: string, blobName: string) {
   try {
     const storage = require('azure-storage');
 
@@ -25,4 +27,9 @@ async function deleteImage(container, blobName) {
     context.bindings.tableStorage = [error];
     throw error;
   }
+}
+
+interface InputParams {
+  container: string;
+  blobName: string;
 }

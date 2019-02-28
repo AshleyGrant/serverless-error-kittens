@@ -42,5 +42,6 @@
       "hubName": "errorKittens",
       "direction": "out"
     }
-  ]
+  ],
+  "scriptFile": "../dist/resize/index.js"
 }

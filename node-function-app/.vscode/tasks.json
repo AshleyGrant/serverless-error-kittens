@@ -2,28 +2,27 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "runFunctionsHost",
-      "type": "shell",
-      "command": "func host start",
-      "isBackground": true,
-      "presentation": {
-        "reveal": "always"
-      },
+      "type": "func",
+      "command": "host start",
       "problemMatcher": "$func-watch",
-      "options": {
-        "env": {
-          "languageWorkers__node__arguments": "--inspect=5858"
-        }
-      },
-      "dependsOn": "installExtensions"
+      "isBackground": true,
+      "dependsOn": "npm: build"
     },
     {
-      "label": "installExtensions",
-      "command": "func extensions install",
+      "type": "npm",
+      "script": "build",
+      "dependsOn": [
+        "func: extensions install",
+        "npm: install"
+      ],
+      "problemMatcher": "$tsc"
+    },
+    {
       "type": "shell",
-      "presentation": {
-        "reveal": "always"
-      }
+      "label": "prune",
+      "command": "npm prune --production",
+      "dependsOn": "npm: build",
+      "problemMatcher": []
     }
   ]
 }

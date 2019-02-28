@@ -29,5 +29,6 @@
       "hubName": "errorKittens",
       "direction": "out"
     }
-  ]
+  ],
+  "scriptFile": "../dist/text-a-kitten/index.js"
 }

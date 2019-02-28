@@ -1,8 +1,10 @@
-module.exports = async function (context, image) {
+import { Context } from '@azure/functions';
+
+export default async function (context: Context, image) {
   try {
     const maxSize = parseInt(process.env.MAX_IMAGE_SIZE_BYTES);
 
-    let {
+    const {
       newImage,
       outputProperty
     } = await resizeImage(image, context.bindingData.name, context);
@@ -26,7 +28,7 @@ module.exports = async function (context, image) {
     context.log(error);
     throw error;
   }
-};
+}
 
 async function resizeImage(image, name, context) {
   const jimp = require('jimp');
