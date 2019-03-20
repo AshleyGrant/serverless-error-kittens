@@ -16,7 +16,8 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    echo $(pwd)
+    pwd
+    ls
     npm install
   displayName: 'npm install'
   workingDirectory: node-function-app
