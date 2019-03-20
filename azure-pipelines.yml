@@ -16,6 +16,6 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    cd node-function-app
     npm install
   displayName: 'npm install'
+  workingDirectory: node-function-app
