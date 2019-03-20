@@ -16,8 +16,14 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    pwd
-    ls
-    npm install
-  displayName: 'npm install'
+    yarn
+  displayName: 'yarn install'
   workingDirectory: node-function-app
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)\node-function-app'
+    includeRootFolder: true
+    archiveType: zip
+    replaceExistingArchive: true
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
