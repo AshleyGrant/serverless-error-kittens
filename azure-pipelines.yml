@@ -22,7 +22,7 @@ steps:
 
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(System.DefaultWorkingDirectory)\node-function-app'
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/node-function-app'
     includeRootFolder: true
     archiveType: zip
     replaceExistingArchive: true
