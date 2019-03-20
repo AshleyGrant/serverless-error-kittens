@@ -27,3 +27,14 @@ steps:
     archiveType: zip
     replaceExistingArchive: true
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+
+# Publish Build Artifacts
+# Publish build artifacts to Azure Pipelines/TFS or a file share
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'drop' 
+    publishLocation: 'Container'
+    #targetPath: # Required when publishLocation == FilePath
+    #parallel: false # Optional
+    #parallelCount: # Optional
