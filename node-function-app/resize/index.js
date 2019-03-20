@@ -1,8 +1,10 @@
+const sharp = require('sharp');
+
 module.exports = async function (context, image) {
   try {
     const maxSize = parseInt(process.env.MAX_IMAGE_SIZE_BYTES);
 
-    let {
+    const {
       newImage,
       outputProperty
     } = await resizeImage(image, context.bindingData.name, context);
@@ -26,30 +28,28 @@ module.exports = async function (context, image) {
     context.log(error);
     throw error;
   }
-};
+}
 
 async function resizeImage(image, name, context) {
-  const jimp = require('jimp');
   const maxWidth = parseInt(process.env.MAX_IMAGE_WIDTH);
   const maxHeight = parseInt(process.env.MAX_IMAGE_HEIGHT);
 
   let newImage = image;
-  let jimpInstance = await jimp.read(image);
+  const sharpInstance = sharp(image);
 
-  const [
-    width, height, mime
-  ] = await Promise.all([
-    jimpInstance.getWidth(),
-    jimpInstance.getHeight(),
-    jimpInstance.getMIME()
-  ]);
+  const {
+    height,
+    width,
+    format
+  } = await sharpInstance.metadata();
 
   let outputProperty;
-  switch (mime) {
-    case jimp.MIME_JPEG:
+
+  switch (format) {
+    case 'jpeg':
       outputProperty = 'jpegContent';
       break;
-    case jimp.MIME_PNG:
+    case 'png':
       outputProperty = 'pngContent';
       break;
     default:
@@ -62,24 +62,10 @@ async function resizeImage(image, name, context) {
   const toTall = height > maxHeight;
 
   if (toWide || toTall) {
-    let newHeight = jimp.AUTO;
-    let newWidth = jimp.AUTO;
 
-    if (toWide && toTall) {
-      newWidth = maxWidth;
-      newHeight = maxHeight;
-    } else if (toWide) {
-      newWidth = maxWidth;
-    } else {
-      newHeight = maxHeight;
-    }
-
-    jimpInstance = await jimpInstance.scaleToFit(newWidth, newHeight);
-
-    // context.log('Resized width: ', await jimpInstance.getWidth())
-    // context.log('Resized height: ', await jimpInstance.getHeight())
-
-    newImage = await jimpInstance.getBufferAsync(mime);
+    newImage = await sharpInstance.resize(maxWidth, maxHeight, {
+      fit: 'inside'
+    }).toBuffer();
   }
 
   return {
