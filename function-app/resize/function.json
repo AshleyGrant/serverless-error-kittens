@@ -1,0 +1,46 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "image",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "%UPLOAD_CONTAINER%/{name}",
+      "connection": "ERROR_KITTENS_STORAGE"
+    },
+    {
+      "name": "queueForDeletion",
+      "type": "queue",
+      "direction": "out",
+      "queueName": "%DELETE_QUEUE%",
+      "connection": "ERROR_KITTENS_STORAGE"
+    },
+    {
+      "name": "needsFurtherScaling",
+      "type": "blob",
+      "direction": "out",
+      "path": "%SCALE_CONTAINER%/{rand-guid}",
+      "connection": "ERROR_KITTENS_STORAGE"
+    },
+    {
+      "name": "jpegContent",
+      "type": "blob",
+      "path": "%IMAGE_CONTAINER%/{rand-guid}.jpg",
+      "connection": "ERROR_KITTENS_STORAGE",
+      "direction": "out"
+    },
+    {
+      "name": "pngContent",
+      "type": "blob",
+      "path": "%IMAGE_CONTAINER%/{rand-guid}.png",
+      "connection": "ERROR_KITTENS_STORAGE",
+      "direction": "out"
+    },
+    {
+      "type": "signalR",
+      "name": "message",
+      "hubName": "errorKittens",
+      "direction": "out"
+    }
+  ]
+}
