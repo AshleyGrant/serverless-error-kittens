@@ -1,0 +1,25 @@
+{
+  "disabled": true,
+  "bindings": [
+    {
+      "name": "image",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "%IMAGE_CONTAINER%/{blobName}",
+      "connection": "ERROR_KITTENS_STORAGE"
+    },
+    {
+      "name": "queueForAI",
+      "type": "queue",
+      "direction": "out",
+      "queueName": "%AI_QUEUE%",
+      "connection": "ERROR_KITTENS_STORAGE"
+    },
+    {
+      "type": "signalR",
+      "name": "message",
+      "hubName": "errorKittens",
+      "direction": "out"
+    }
+  ]
+}
