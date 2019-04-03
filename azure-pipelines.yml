@@ -6,7 +6,7 @@ steps:
   inputs:
     versionSpec: 10.15.3
 
-- base: 'cp "$(which node.exe)" .'
+- bash: 'cp "$(which node.exe)" .'
   workingDirectory: 'function-app'
   displayName: 'copy node.exe for deployment'
 
