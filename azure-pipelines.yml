@@ -6,26 +6,5 @@ steps:
   inputs:
     versionSpec: 10.15.3
 
-- bash: 'npm i -g azure-functions-core-tools --unsafe-perm true'
-  displayName: 'Install Azure Functions CLI'
-
-- bash: 'func extensions install'
-  workingDirectory: 'function-app'
-  displayName: 'Install Azure Functions Extensions'
-
-- bash: yarn
-  workingDirectory: 'function-app'
-  displayName: 'yarn install'
-
-- task: DeleteFiles@1
-  inputs:
-    contents: function-app\.vscode
-
-- task: ArchiveFiles@2
-  displayName: 'Archive files'
-  inputs:
-    rootFolderOrFile: 'function-app'
-    includeRootFolder: false
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
+- bash: 'which node'
+  displayName: 'Copy global node'
